@@ -14,6 +14,14 @@ struct KmpAppApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .onTapGesture {
+                    // Dismiss keyboard when tapping outside any text field.
+                    // Applied at the app root so it works on every screen.
+                    UIApplication.shared.sendAction(
+                        #selector(UIResponder.resignFirstResponder),
+                        to: nil, from: nil, for: nil
+                    )
+                }
         }
     }
 }

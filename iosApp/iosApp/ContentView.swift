@@ -1,11 +1,6 @@
 import SwiftUI
 import shared
 
-/// Root content view — observes the shared Navigator for screen changes.
-///
-/// After login, shows a TabView with bottom navigation matching the shared
-/// App.kt tabs: Home, Camera, Components, Notifications.
-/// Settings is accessed from Home's navigation bar.
 struct ContentView: View {
     private let loginViewModel = KoinIosHelperKt.loginViewModel()
 
@@ -13,7 +8,6 @@ struct ContentView: View {
     @State private var navHandle: NavigationHandle?
     @State private var selectedTab: String = "/home"
 
-    /// Routes that appear as bottom nav tabs
     private let tabRoutes = ["/home", "/camera", "/components", "/notifications"]
 
     var body: some View {
@@ -27,7 +21,6 @@ struct ContentView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             default:
-                // Authenticated: show tab bar
                 authenticatedView
             }
         }
@@ -44,7 +37,6 @@ struct ContentView: View {
                     }
                 }
             }
-
             checkExistingSession()
         }
         .onDisappear {

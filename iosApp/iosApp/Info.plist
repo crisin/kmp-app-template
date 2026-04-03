@@ -16,8 +16,12 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>UILaunchScreen</key>
+	<dict/>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs camera access to capture photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs photo library access to pick and save images.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>This app uses Face ID for secure authentication.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

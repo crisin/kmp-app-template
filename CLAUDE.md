@@ -223,6 +223,17 @@ Hard-won lessons from getting this template to actually build and run. Read thes
 - **Swift can't collect Kotlin StateFlow** — use `FlowObserver<T>` (in `shared/src/iosMain/.../util/FlowHelper.kt`) which wraps collection in a coroutine and calls a Swift callback on each emission.
 - **Keychain C interop types** — `SecItemCopyMatching` expects `CFTypeRefVar`, not `ObjCObjectVar`. Needs `@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)`.
 - **Keychain queries must use CFDictionary, not Kotlin Map or NSDictionary** — Security framework constants (`kSecClass`, `kSecAttrService`, etc.) are `CFStringRef` pointers. Kotlin's `mapOf()` creates a `HashMap` (not bridgeable to `CFDictionaryRef`). `NSMutableDictionary.setValue(forKey: String)` requires Kotlin `String` keys, but `CFStringRef` can't be cast to `String`. The working approach: `CFDictionaryCreateMutable` + `CFDictionaryAddValue` which accepts raw `COpaquePointer` — no bridging needed for CF constants. Use `CFBridgingRetain()` for Kotlin/NSString values.
+- **Info.plist must have `UILaunchScreen` key** — Without `<key>UILaunchScreen</key><dict/>` in Info.plist, iOS renders the app in legacy compatibility mode with visible letterboxing (a ~2cm gap below the tab bar). This is NOT caused by iOS 26 "liquid glass" styling — it's a missing plist key that triggers the old screen-size compatibility layer.
+- **`.toggleStyle(.checkbox)` is macOS-only** — Using it in SwiftUI on iOS causes a compile error. Use the default toggle style instead.
+- **Keyboard dismiss requires explicit handling** — SwiftUI doesn't dismiss the keyboard when tapping outside a text field by default. Add `.onTapGesture { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) }` on the root view in the App struct.
+
+### iOS Camera & Photo Implementation
+
+The Photos tab (`CameraView.swift`) uses real native iOS APIs for image capture and selection:
+- **Camera capture:** `CameraCaptureView` wraps `UIImagePickerController` with `.camera` source type. Only available on physical devices — button is disabled on simulator via `isSourceTypeAvailable(.camera)`.
+- **Photo picker:** `PhotoPickerView` wraps `PHPickerViewController` (up to 10 images, images filter). Uses `DispatchGroup` to collect async `loadObject` results before calling the completion handler.
+- **Local persistence:** `PhotoStore` saves JPEGs (0.8 quality) to `Documents/SavedPhotos/` and tracks metadata in `manifest.json`. On load, it filters out photos whose files no longer exist on disk.
+- **Required Info.plist keys:** `NSCameraUsageDescription`, `NSPhotoLibraryUsageDescription`.
 
 ### Web
 

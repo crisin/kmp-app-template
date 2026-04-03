@@ -108,7 +108,6 @@ private struct SelectionSection: View {
         Toggle("Switch: \(switchOn ? "On" : "Off")", isOn: $switchOn)
 
         Toggle("Checkbox", isOn: $checkboxChecked)
-            .toggleStyle(.checkbox)
 
         VStack(alignment: .leading) {
             Text("Radio Group:")
